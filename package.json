@@ -1,0 +1,22 @@
+{
+  "name": "progressive-web-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -c-1 -p 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/babar-waheed/progressive-web-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/babar-waheed/progressive-web-app/issues"
+  },
+  "homepage": "https://github.com/babar-waheed/progressive-web-app#readme",
+  "devDependencies": {
+    "http-server": "^0.12.0"
+  }
+}
