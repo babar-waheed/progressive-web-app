@@ -1,5 +1,5 @@
-var STATIC_CACHE = 'static-v6';
-var DYNAMIC_CACHE = 'dynamic';
+var STATIC_CACHE = 'static-v1';
+var DYNAMIC_CACHE = 'dynamic-v1';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -16,19 +16,6 @@ var STATIC_FILES = [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
-
-function trimCache(cacheName, maxItems){
-    cache.open(cacheName)
-        .then(function(){
-            return cache.keys();
-        })
-        .then(function(keys){
-            if(key.length > maxItems){
-                cache.delete(keys[0])
-                    .then(trimCache(cacheName, maxItems))
-            }
-        })
-}
 
 function isInArray(string, array) {
     var cachePath;
@@ -71,7 +58,7 @@ self.addEventListener('activate', function(event){
 
 //cache, then network!
 self.addEventListener('fetch', function (event) {
-    var url = 'https://httpbin.org/get';
+    var url = 'https://instababs-api.firebaseio.com/posts.json';
     if (event.request.url.indexOf(url) > -1) {
       event.respondWith(
         caches.open(DYNAMIC_CACHE)
