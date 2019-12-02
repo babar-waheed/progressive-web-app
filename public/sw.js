@@ -17,6 +17,19 @@ var STATIC_FILES = [
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
 
+function trimCache(cacheName, maxItems){
+    cache.open(cacheName)
+        .then(function(){
+            return cache.keys();
+        })
+        .then(function(keys){
+            if(key.length > maxItems){
+                cache.delete(keys[0])
+                    .then(trimCache(cacheName, maxItems))
+            }
+        })
+}
+
 function isInArray(string, array) {
     var cachePath;
     if (string.indexOf(self.origin) === 0) { // request targets domain where we serve the page from (i.e. NOT a CDN)
