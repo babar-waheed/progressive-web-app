@@ -43,33 +43,91 @@ self.addEventListener('activate', function(event){
     return self.clients.claim();
 })
 
-self.addEventListener('fetch', function(event) {
-    event.respondWith(
+//cache, then network!
+self.addEventListener('fetch', function (event) {
+    var url = 'https://httpbin.org/get';
+    if (event.request.url.indexOf(url) > -1) {
+      event.respondWith(
+        caches.open(DYNAMIC_CACHE)
+          .then(function (cache) {
+            return fetch(event.request) 
+              .then(function (res) {
+                cache.put(event.request, res.clone());
+                return res;
+              });
+          })
+      );
+    } else {
+      event.respondWith(
         caches.match(event.request)
-            .then(function(response){
-                if(response){
-                    //return cache
-                    return response;
-                }else{
-                    //network
-                    //return dynamic cache
-                    return fetch(event.request)
-                        .then(function(res){
-                            return caches.open(DYNAMIC_CACHE)
-                                .then(function(cache){
-                                    cache.put(event.request.url, res.clone())
-                                    return res;
-                                })
-                        })
-                        .catch(function(err){
-                            console.log('error');
-                            //if cache not found fallback to offline.html
-                             return caches.open(STATIC_CACHE)
-                                .then(function(cache){
-                                    return cache.match('/offline.html')
-                                })
-                        })
-                }
-            })
-    );
- });
+          .then(function (response) {
+            if (response) {
+              return response;
+            } else {
+              return fetch(event.request)
+                .then(function (res) {
+                  return caches.open(DYNAMIC_CACHE)
+                    .then(function (cache) {
+                      cache.put(event.request.url, res.clone());
+                      return res;
+                    })
+                })
+                .catch(function (err) {
+                  return caches.open(STATIC_CACHE)
+                    .then(function (cache) {
+                        if(event.request.url.indexOf('/help')){
+                            return cache.match('/offline.html');
+                        }                  
+                    });
+                });
+            }
+          })
+      );
+    }
+  });
+
+// self.addEventListener('fetch', function(event) {
+//     event.respondWith(
+//         caches.match(event.request)
+//             .then(function(response){
+//                 if(response){
+//                     //return cache
+//                     return response;
+//                 }else{
+//                     //network
+//                     //return dynamic cache
+//                     return fetch(event.request)
+//                         .then(function(res){
+//                             return caches.open(DYNAMIC_CACHE)
+//                                 .then(function(cache){
+//                                     cache.put(event.request.url, res.clone())
+//                                     return res;
+//                                 })
+//                         })
+//                         .catch(function(err){
+//                             console.log('error');
+//                             //if cache not found fallback to offline.html
+//                              return caches.open(STATIC_CACHE)
+//                                 .then(function(cache){
+//                                     return cache.match('/offline.html')
+//                                 })
+//                         })
+//                 }
+//             })
+//     );
+//  });
+
+
+ // Cache-only
+// self.addEventListener('fetch', function (event) {
+//   event.respondWith(
+//     caches.match(event.request)
+//   );
+// });
+
+// Network-only
+// self.addEventListener('fetch', function (event) {
+//   event.respondWith(
+//     fetch(event.request)
+//   );
+// });
