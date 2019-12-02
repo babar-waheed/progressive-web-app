@@ -93,7 +93,7 @@ self.addEventListener('fetch', function (event) {
                 .catch(function (err) {
                   return caches.open(STATIC_CACHE)
                     .then(function (cache) {
-                        if(event.request.url.indexOf('/help')){
+                        if(event.request.header.get('accept').includes('text/html')){
                             return cache.match('/offline.html');
                         }                  
                     });
