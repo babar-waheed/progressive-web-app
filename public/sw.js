@@ -48,8 +48,11 @@ self.addEventListener('fetch', function(event) {
         caches.match(event.request)
             .then(function(response){
                 if(response){
+                    //return cache
                     return response;
                 }else{
+                    //network
+                    //return dynamic cache
                     return fetch(event.request)
                         .then(function(res){
                             return caches.open(DYNAMIC_CACHE)
@@ -60,6 +63,7 @@ self.addEventListener('fetch', function(event) {
                         })
                         .catch(function(err){
                             console.log('error');
+                            //if cache not found fallback to offline.html
                              return caches.open(STATIC_CACHE)
                                 .then(function(cache){
                                     return cache.match('/offline.html')
