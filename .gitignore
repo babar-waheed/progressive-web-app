@@ -3,5 +3,6 @@ node_modules
 .DS_Store
 /functions/instababas-key.json
 /functions/*.log
+/functions/config.js
 *.log
 .firebase

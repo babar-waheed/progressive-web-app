@@ -126,7 +126,8 @@ if ('indexedDB' in window) {
 }
 
 function sendData() {
-  fetch('https://us-central1-instababs-api.cloudfunctions.net/storePostData', {
+  //https://us-central1-instababs-api.cloudfunctions.net/storePostData
+  fetch('http://localhost:5000/instababs-api/us-central1/storePostData', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
