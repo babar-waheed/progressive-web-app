@@ -2,6 +2,9 @@ var shareImageButton = document.querySelector('#share-image-button');
 var createPostArea = document.querySelector('#create-post');
 var closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 var sharedMomentsArea = document.querySelector('#shared-moments');
+var form = document.querySelector('form');
+var titleInput = document.querySelector('#title');
+var locationInput = document.querySelector('#location');
 
 function openCreatePostModal() {
   // createPostArea.style.display = 'block';
@@ -24,6 +27,7 @@ function openCreatePostModal() {
     deferredPrompt = null;
   }
 
+  // To unregister service worker.
   // if ('serviceWorker' in navigator) {
   //   navigator.serviceWorker.getRegistrations()
   //     .then(function(registrations) {
@@ -94,7 +98,7 @@ function updateUI(data) {
   }
 }
 
-var url = 'https://pwagram-99adf.firebaseio.com/posts.json';
+var url = 'https://instababs-api.firebaseio.com/posts.json';
 var networkDataReceived = false;
 
 fetch(url)
@@ -120,3 +124,59 @@ if ('indexedDB' in window) {
       }
     });
 }
+
+function sendData() {
+  fetch('https://us-central1-instababs-api.cloudfunctions.net/storePostData', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      id: new Date().toISOString(),
+      title: titleInput.value,
+      location: locationInput.value,
+      image: 'https://firebasestorage.googleapis.com/v0/b/instababs-api.appspot.com/o/sf-boat.jpg?alt=media&token=f0f30b8c-6c39-4c64-998c-df4e2013bf43'
+    })
+  })
+    .then(function(res) {
+      console.log('Sent data', res);
+      updateUI();
+    })
+}
+
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  if (titleInput.value.trim() === '' || locationInput.value.trim() === '') {
+    alert('Please enter valid data!');
+    return;
+  }
+
+  closeCreatePostModal();
+
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    navigator.serviceWorker.ready
+      .then(function(sw) {
+        var post = {
+          id: new Date().toISOString(),
+          title: titleInput.value,
+          location: locationInput.value
+        };
+        writeData('sync-posts', post)
+          .then(function() {
+            return sw.sync.register('sync-new-posts');
+          })
+          .then(function() {
+            var snackbarContainer = document.querySelector('#confirmation-toast');
+            var data = {message: 'Your Post was saved for syncing!'};
+            snackbarContainer.MaterialSnackbar.showSnackbar(data);
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      });
+  } else {
+    sendData();
+  }
+});
