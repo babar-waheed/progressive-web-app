@@ -80,7 +80,11 @@ exports.storePostData = functions.https.onRequest(function(request, response) {
                   "/o/" +
                   encodeURIComponent(uploadedFile.name) +
                   "?alt=media&token=" +
-                  uuid
+                  uuid,
+                  rawLocation: {
+                      lat: fields.rawLocationLat,
+                      lng: fields.rawLocationLng
+                  } 
               })
               .then(function() {
                    webpush.setVapidDetails('mailto:info@webdevelopmentexperts.com.au',

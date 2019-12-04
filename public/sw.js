@@ -194,9 +194,9 @@ self.addEventListener('sync', function(event) {
             postData.append('id', dt.id);
             postData.append('title', dt.title);
             postData.append('location', dt.location);
-            // postData.append('rawLocationLat', dt.rawLocation.lat);
-            // postData.append('rawLocationLng', dt.rawLocation.lng);
-            postData.append('file', dt.picture, dt.id + '.png');
+            postData.append('rawLocationLat', dt.rawLocation.lat);
+            postData.append('rawLocationLng', dt.rawLocation.lng);
+            postData.append('file', dt.picture, dt.id + '.png'); 
 
             fetch('https://us-central1-instababs-api.cloudfunctions.net/storePostData', {
               method: 'POST',
