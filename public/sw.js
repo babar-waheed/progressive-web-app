@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v3';
-var CACHE_DYNAMIC_NAME = 'dynamic-v3';
+var CACHE_STATIC_NAME = 'static-v4';
+var CACHE_DYNAMIC_NAME = 'dynamic-v4';
 var STATIC_FILES = [
   '/',
   '/index.html',
@@ -189,19 +189,20 @@ self.addEventListener('sync', function(event) {
       readAllData('sync-posts')
         .then(function(data) {
           for (var dt of data) {
+
+            var postData = new FormData();
+            postData.append('id', dt.id);
+            postData.append('title', dt.title);
+            postData.append('location', dt.location);
+            // postData.append('rawLocationLat', dt.rawLocation.lat);
+            // postData.append('rawLocationLng', dt.rawLocation.lng);
+            postData.append('file', dt.picture, dt.id + '.png');
+            
+            //http://localhost:5000/instababs-api/us-central1/storePostData
             //https://us-central1-instababs-api.cloudfunctions.net/storePostData
-            fetch('http://localhost:5000/instababs-api/us-central1/storePostData', {
+            fetch('https://us-central1-instababs-api.cloudfunctions.net/storePostData', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: JSON.stringify({
-                id: dt.id,
-                title: dt.title,
-                location: dt.location,
-                image: 'https://firebasestorage.googleapis.com/v0/b/instababs-api.appspot.com/o/sf-boat.jpg?alt=media&token=f0f30b8c-6c39-4c64-998c-df4e2013bf43'
-              })
+              body: postData
             })
               .then(function(res) {
                 console.log('Sent data', res);

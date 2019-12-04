@@ -40,6 +40,20 @@ function initializeMedia() {
       imagePickerArea.style.display = 'block';
     });
 }
+
+captureButton.addEventListener('click', function (event) {
+  canvasElement.style.display = 'block';
+  videoPlayer.style.display = 'none';
+  captureButton.style.display = 'none';
+  var context = canvasElement.getContext('2d');
+  context.drawImage(videoPlayer, 0, 0, canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width));
+  videoPlayer.srcObject.getVideoTracks().forEach(function (track) {
+    track.stop();
+  });
+  picture = dataURItoBlob(canvasElement.toDataURL());
+});
+
+
 function openCreatePostModal() {
   // createPostArea.style.display = 'block';
   // setTimeout(function() {
@@ -164,19 +178,20 @@ if ('indexedDB' in window) {
 }
 
 function sendData() {
+
+  var id = new Date().toISOString();
+  var postData = new FormData();
+  postData.append('id', id);
+  postData.append('title', titleInput.value);
+  postData.append('location', locationInput.value);
+  postData.append('rawLocationLat', fetchedLocation.lat);
+  postData.append('rawLocationLng', fetchedLocation.lng);
+  postData.append('file', picture, id + '.png');
+  //http://localhost:5000/instababs-api/us-central1/storePostData
   //https://us-central1-instababs-api.cloudfunctions.net/storePostData
-  fetch('http://localhost:5000/instababs-api/us-central1/storePostData', {
+  fetch('https://us-central1-instababs-api.cloudfunctions.net/storePostData', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      id: new Date().toISOString(),
-      title: titleInput.value,
-      location: locationInput.value,
-      image: 'https://firebasestorage.googleapis.com/v0/b/instababs-api.appspot.com/o/sf-boat.jpg?alt=media&token=f0f30b8c-6c39-4c64-998c-df4e2013bf43'
-    })
+    body: postData
   })
     .then(function(res) {
       console.log('Sent data', res);
@@ -200,7 +215,9 @@ form.addEventListener('submit', function(event) {
         var post = {
           id: new Date().toISOString(),
           title: titleInput.value,
-          location: locationInput.value
+          location: locationInput.value,
+          picture: picture,
+          rawLocation: fetchedLocation
         };
         writeData('sync-posts', post)
           .then(function() {
