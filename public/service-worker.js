@@ -38,6 +38,32 @@ workboxSW.router.registerRoute('https://instababs-api.firebaseio.com/posts.json'
     }) 
 });
 
+workboxSW.router.registerRoute(function (routeData) {
+    return (routeData.event.request.headers.get('accept').includes('text/html'));
+  }, function(args) {
+    return caches.match(args.event.request)
+      .then(function (response) {
+        if (response) {
+          return response;
+        } else {
+          return fetch(args.event.request)
+            .then(function (res) {
+              return caches.open('dynamic')
+                .then(function (cache) {
+                  cache.put(args.event.request.url, res.clone());
+                  return res;
+                })
+            })
+            .catch(function (err) {
+              return caches.match('/offline.html')
+                .then(function (res) {
+                  return res;
+                });
+            });
+        }
+      })
+  });
+
 workboxSW.precache([
   {
     "url": "404.html",
@@ -61,7 +87,7 @@ workboxSW.precache([
   },
   {
     "url": "service-worker.js",
-    "revision": "6a449672d9dd52f58ec57169323a435a"
+    "revision": "27b44dce7224671e98171a63412b9e1a"
   },
   {
     "url": "src/css/app.css",
@@ -185,7 +211,7 @@ workboxSW.precache([
   },
   {
     "url": "sw-base.js",
-    "revision": "dbaef3e2ffb13b39946b9b6089b844fa"
+    "revision": "4c4ece7728225c9fc097006544eca720"
   },
   {
     "url": "sw.js",
