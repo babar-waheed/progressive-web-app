@@ -1,6 +1,43 @@
 importScripts('workbox-sw.prod.v2.1.3.js');
+importScripts('/src/js/idb.js');
+importScripts('/src/js/utility.js');
 
 const workboxSW = new self.WorkboxSW();
+
+workboxSW.router.registerRoute(/.*(?:googleapis|gstatic)\.com.*/, workboxSW.strategies.staleWhileRevalidate({
+    cacheName: 'google-fonts', 
+    cacheExpiration: {
+        maxEntries: 3,
+        maxAgeSeconds: 60 * 60 * 24 * 30
+    }
+}));
+
+workboxSW.router.registerRoute('https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css', workboxSW.strategies.staleWhileRevalidate({
+    cacheName: 'material-css'
+}));
+
+workboxSW.router.registerRoute(/.*(?:firebasegoogleapis|gstatic)\.com.*/, workboxSW.strategies.staleWhileRevalidate({
+    cacheName: 'post-images'
+}));
+
+workboxSW.router.registerRoute('https://instababs-api.firebaseio.com/posts.json', function(args){
+    console.log("IndexedDB");
+    return fetch(args.event.request)
+    .then(function (res) {
+      var clonedRes = res.clone();
+      clearAllData('posts')
+        .then(function () {
+          return clonedRes.json();
+        })
+        .then(function (data) {
+          for (var key in data) {
+            writeData('posts', data[key])
+          }
+        });
+      return res;
+    }) 
+});
+
 workboxSW.precache([
   {
     "url": "404.html",
@@ -24,7 +61,7 @@ workboxSW.precache([
   },
   {
     "url": "service-worker.js",
-    "revision": "1563e03ee09fb8db46c7413e0748ce92"
+    "revision": "6a449672d9dd52f58ec57169323a435a"
   },
   {
     "url": "src/css/app.css",
@@ -148,7 +185,7 @@ workboxSW.precache([
   },
   {
     "url": "sw-base.js",
-    "revision": "0304aa4792e06e0a839100d66b2853ea"
+    "revision": "dbaef3e2ffb13b39946b9b6089b844fa"
   },
   {
     "url": "sw.js",
