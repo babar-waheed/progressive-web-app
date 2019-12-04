@@ -184,17 +184,20 @@ function sendData() {
   postData.append('id', id);
   postData.append('title', titleInput.value);
   postData.append('location', locationInput.value);
-  postData.append('rawLocationLat', fetchedLocation.lat);
-  postData.append('rawLocationLng', fetchedLocation.lng);
+  // postData.append('rawLocationLat', fetchedLocation.lat);
+  // postData.append('rawLocationLng', fetchedLocation.lng);
   postData.append('file', picture, id + '.png');
   //http://localhost:5000/instababs-api/us-central1/storePostData
   //https://us-central1-instababs-api.cloudfunctions.net/storePostData
   fetch('https://us-central1-instababs-api.cloudfunctions.net/storePostData', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
     body: postData
   })
     .then(function(res) {
-      console.log('Sent data', res);
+      console.log('Sent data', res); 
       updateUI();
     })
 }
@@ -217,7 +220,7 @@ form.addEventListener('submit', function(event) {
           title: titleInput.value,
           location: locationInput.value,
           picture: picture,
-          rawLocation: fetchedLocation
+         // rawLocation: fetchedLocation
         };
         writeData('sync-posts', post)
           .then(function() {

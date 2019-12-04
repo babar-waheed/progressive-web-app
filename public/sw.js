@@ -10,6 +10,7 @@ var STATIC_FILES = [
   '/src/js/app.js',
   '/src/js/feed.js',
   '/src/js/idb.js',
+  '/src/js/utility.js',
   '/src/js/promise.js',
   '/src/js/fetch.js',
   '/src/js/material.min.js',
@@ -189,7 +190,6 @@ self.addEventListener('sync', function(event) {
       readAllData('sync-posts')
         .then(function(data) {
           for (var dt of data) {
-
             var postData = new FormData();
             postData.append('id', dt.id);
             postData.append('title', dt.title);
@@ -197,9 +197,7 @@ self.addEventListener('sync', function(event) {
             // postData.append('rawLocationLat', dt.rawLocation.lat);
             // postData.append('rawLocationLng', dt.rawLocation.lng);
             postData.append('file', dt.picture, dt.id + '.png');
-            
-            //http://localhost:5000/instababs-api/us-central1/storePostData
-            //https://us-central1-instababs-api.cloudfunctions.net/storePostData
+
             fetch('https://us-central1-instababs-api.cloudfunctions.net/storePostData', {
               method: 'POST',
               body: postData
@@ -222,7 +220,6 @@ self.addEventListener('sync', function(event) {
     );
   }
 });
-
 self.addEventListener('push', function(event){
   console.log("[Service Worker] Push Notification received", event);
   var data = {title: 'New notification', content:'content', openUrl:'/'};

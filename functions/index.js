@@ -115,12 +115,12 @@ exports.storePostData = functions.https.onRequest(function(request, response) {
                       console.log(err);
                     });
                 });
-                response
+                return response
                   .status(201)
                   .json({ message: "Data stored", id: fields.id });
               })
               .catch(function(err) {
-                response.status(500).json({ error: err });
+                return response.status(500).json({ error: err });
               });
           } else {
             console.log(err);
