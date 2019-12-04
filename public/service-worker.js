@@ -1,23 +1,7 @@
 importScripts('workbox-sw.prod.v2.1.3.js');
 
-/**
- * DO NOT EDIT THE FILE MANIFEST ENTRY
- *
- * The method precache() does the following:
- * 1. Cache URLs in the manifest to a local cache.
- * 2. When a network request is made for any of these URLs the response
- *    will ALWAYS comes from the cache, NEVER the network.
- * 3. When the service worker changes ONLY assets with a revision change are
- *    updated, old cache entries are left as is.
- *
- * By changing the file manifest manually, your users may end up not receiving
- * new versions of files because the revision hasn't changed.
- *
- * Please use workbox-build or some other tool / approach to generate the file
- * manifest which accounts for changes to local files and update the revision
- * accordingly.
- */
-const fileManifest = [
+const workboxSW = new self.WorkboxSW();
+workboxSW.precache([
   {
     "url": "404.html",
     "revision": "0a27a4163254fc8fce870c8cc3a3f94f"
@@ -25,10 +9,6 @@ const fileManifest = [
   {
     "url": "favicon.ico",
     "revision": "2cab47d9e04d664d93c8d91aec59e812"
-  },
-  {
-    "url": "help/index.html",
-    "revision": "ec3f1f60a56f0d8c9e62d61d1ea68afa"
   },
   {
     "url": "index.html",
@@ -41,6 +21,10 @@ const fileManifest = [
   {
     "url": "offline.html",
     "revision": "45352e71a80a5c75d25e226e7330871b"
+  },
+  {
+    "url": "service-worker.js",
+    "revision": "1563e03ee09fb8db46c7413e0748ce92"
   },
   {
     "url": "src/css/app.css",
@@ -136,7 +120,7 @@ const fileManifest = [
   },
   {
     "url": "src/js/app.js",
-    "revision": "ca786d399e2347da3451b19a93e4af8e"
+    "revision": "79b465e95e03f8604c59fe7c055ad898"
   },
   {
     "url": "src/js/feed.js",
@@ -163,10 +147,15 @@ const fileManifest = [
     "revision": "4853a87685922cdf08b8bc5ed3f6f85e"
   },
   {
+    "url": "sw-base.js",
+    "revision": "0304aa4792e06e0a839100d66b2853ea"
+  },
+  {
     "url": "sw.js",
     "revision": "94db0735181061a105c54a6828cfa13f"
+  },
+  {
+    "url": "workbox-sw.prod.v2.1.3.js",
+    "revision": "a9890beda9e5f17e4c68f42324217941"
   }
-];
-
-const workboxSW = new self.WorkboxSW();
-workboxSW.precache(fileManifest);
+]);

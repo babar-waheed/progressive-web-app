@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "http-server -c-1 -p 3000",
-    "generate-sw": "workbox generate:sw"
+    "generate-sw": "workbox generate:sw",
+    "inject-sw": "workbox inject:manifest"
   },
   "repository": {
     "type": "git",
